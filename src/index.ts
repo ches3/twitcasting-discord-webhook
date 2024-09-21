@@ -36,7 +36,7 @@ app.post(
 					url: req.movie.link,
 					author: {
 						name: req.broadcaster.name,
-						url: req.broadcaster.image,
+						icon_url: req.broadcaster.image,
 					},
 					image: {
 						url: req.movie.large_thumbnail,
