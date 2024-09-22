@@ -25,7 +25,6 @@ app.post(
 	async (c) => {
 		const webhook = c.env.WEBHOOK_URL;
 		const req = c.req.valid("json");
-		console.log(new Date(req.movie.created * 1000).toISOString());
 
 		const message = {
 			content: "",
