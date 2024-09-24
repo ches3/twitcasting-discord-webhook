@@ -6,6 +6,7 @@ import { WebhookSchema } from "./schema";
 type Bindings = {
 	WEBHOOK_URL: string;
 	TWITCASTING_TOKEN: string;
+	TWITCASTING_SIGNATURE: string;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -29,6 +30,10 @@ app.post(
 		const req = c.req.valid("json");
 
 		console.log(req);
+
+		if (req.signature !== c.env.TWITCASTING_SIGNATURE) {
+			return c.json({ message: "Invalid signature" }, 400);
+		}
 
 		// Webhookのリクエストではライブのタイトルが反映されないことがあるため、
 		// ライブ情報をAPIから取得する
