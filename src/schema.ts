@@ -1,6 +1,6 @@
-import { boolean, nullable, number, object, string } from "valibot";
+import { array, boolean, nullable, number, object, string } from "valibot";
 
-const movieSchema = object({
+const MovieSchema = object({
 	id: string(),
 	user_id: string(),
 	title: string(),
@@ -24,7 +24,7 @@ const movieSchema = object({
 	hls_url: nullable(string()),
 });
 
-const broadcasterSchema = object({
+const BroadcasterSchema = object({
 	id: string(),
 	screen_id: string(),
 	name: string(),
@@ -38,8 +38,14 @@ const broadcasterSchema = object({
 	created: number(),
 });
 
-export const Schema = object({
+export const WebhookSchema = object({
 	signature: string(),
-	movie: movieSchema,
-	broadcaster: broadcasterSchema,
+	movie: MovieSchema,
+	broadcaster: BroadcasterSchema,
+});
+
+export const GetMovieSchema = object({
+	movie: MovieSchema,
+	broadcaster: BroadcasterSchema,
+	tags: array(string()),
 });
