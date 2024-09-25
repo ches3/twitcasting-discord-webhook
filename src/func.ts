@@ -8,18 +8,24 @@ export const getMovie = async (id: string, token: string) => {
 		Authorization: `Basic ${token}`,
 	};
 
-	const res = await fetch(`https://apiv2.twitcasting.tv/movies/${id}`, {
-		headers: headers,
-	});
-	if (!res.ok) {
-		return;
+	for (let i = 0; i < 3; i++) {
+		await new Promise((resolve) => setTimeout(resolve, 500));
+		const res = await fetch(`https://apiv2.twitcasting.tv/movies/${id}`, {
+			headers: headers,
+		});
+		if (!res.ok) {
+			continue;
+		}
+		const json = await res.json();
+		const result = safeParse(GetMovieSchema, json);
+		if (!result.success) {
+			continue;
+		}
+		if (result.output.movie.title !== `Live #${id}`) {
+			continue;
+		}
+		return result.output;
 	}
-	const json = await res.json();
-	const result = safeParse(GetMovieSchema, json);
-	if (!result.success) {
-		return;
-	}
-	return result.output;
 };
 
 export const sendMessage = async (url: string, message: unknown) => {
