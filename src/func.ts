@@ -21,7 +21,7 @@ export const getMovie = async (id: string, token: string) => {
 		if (!result.success) {
 			continue;
 		}
-		if (result.output.movie.title !== `Live #${id}`) {
+		if (result.output.movie.title === `Live #${id}`) {
 			continue;
 		}
 		return result.output;
