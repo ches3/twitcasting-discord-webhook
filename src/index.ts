@@ -37,10 +37,8 @@ app.post(
 
 		// Webhookのリクエストではライブのタイトルが反映されないことがあるため、
 		// ライブ情報をAPIから取得する
-		const movie = await getMovie(req.movie.id, c.env.TWITCASTING_TOKEN);
-		if (!movie) {
-			return c.json({ message: "Failed to fetch movie" }, 400);
-		}
+		const { movie, broadcaster } =
+			(await getMovie(req.movie.id, c.env.TWITCASTING_TOKEN)) || req;
 
 		console.log(movie);
 
@@ -48,24 +46,21 @@ app.post(
 			content: "",
 			embeds: [
 				{
-					title: movie.movie.title,
-					description:
-						movie.movie.title !== movie.movie.subtitle
-							? movie.movie.subtitle
-							: "",
-					url: movie.movie.link,
+					title: movie.title,
+					description: movie.title !== movie.subtitle ? movie.subtitle : "",
+					url: movie.link,
 					author: {
-						name: movie.broadcaster.name,
-						icon_url: movie.broadcaster.image,
+						name: broadcaster.name,
+						icon_url: broadcaster.image,
 					},
 					image: {
-						url: movie.movie.large_thumbnail,
+						url: movie.large_thumbnail,
 					},
 					footer: {
 						text: "ツイキャス",
 						icon_url: "https://twitcasting.tv/img/icon192.png",
 					},
-					timestamp: new Date(movie.movie.created * 1000).toISOString(),
+					timestamp: new Date(movie.created * 1000).toISOString(),
 				},
 			],
 		};
