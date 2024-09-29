@@ -49,3 +49,8 @@ export const GetMovieSchema = object({
 	broadcaster: BroadcasterSchema,
 	tags: array(string()),
 });
+
+export const AddWatchListSchema = object({
+	id: string(),
+	url: string(),
+});

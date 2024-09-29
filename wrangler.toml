@@ -5,3 +5,7 @@ tail_consumers = [{service = "twitcasting-discord-webhook-tail"}]
 
 [observability]
 enabled = true
+
+[[kv_namespaces]]
+binding = "WATCH_LIST"
+id = "2ccff9a8459c4d179a477d068ec8cdb9"

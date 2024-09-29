@@ -1,12 +1,16 @@
 import { vValidator } from "@hono/valibot-validator";
 import { Hono } from "hono";
 import { getMovie, sendMessage } from "./func";
-import { WebhookSchema } from "./schema";
+import { AddWatchListSchema, WebhookSchema } from "./schema";
 
 type Bindings = {
-	WEBHOOK_URL: string;
 	TWITCASTING_TOKEN: string;
 	TWITCASTING_SIGNATURE: string;
+	WATCH_LIST: KVNamespace;
+};
+
+type KVMetadata = {
+	url: string;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -26,8 +30,15 @@ app.post(
 		}
 	}),
 	async (c) => {
-		const webhook = c.env.WEBHOOK_URL;
 		const req = c.req.valid("json");
+
+		const watchListData = await c.env.WATCH_LIST.getWithMetadata<KVMetadata>(
+			req.broadcaster.id,
+		);
+		const webhook = watchListData.metadata?.url;
+		if (!webhook) {
+			throw new Error("Webhook URL not found");
+		}
 
 		console.log(req);
 
@@ -72,5 +83,39 @@ app.post(
 		return c.json({ message: "Webhook sent successfully" });
 	},
 );
+
+app.get("/watchlist", async (c) => {
+	const list = await c.env.WATCH_LIST.list<KVMetadata>();
+	const items = list.keys.map((key) => ({
+		id: key.name,
+		url: key.metadata?.url,
+	}));
+	return c.json(items);
+});
+
+app.post(
+	"/watchlist",
+	vValidator("json", AddWatchListSchema, (result, c) => {
+		if (!result.success) {
+			return c.json(
+				{ message: "Invalid request body", errors: result.issues },
+				400,
+			);
+		}
+	}),
+	async (c) => {
+		const req = c.req.valid("json");
+		await c.env.WATCH_LIST.put(req.id, "", {
+			metadata: { url: req.url },
+		});
+		return c.json({ id: req.id, url: req.url });
+	},
+);
+
+app.delete("/watchlist/:id", async (c) => {
+	const id = c.req.param("id");
+	await c.env.WATCH_LIST.delete(id);
+	return c.json({ message: "Watchlist deleted successfully" });
+});
 
 export default app;
