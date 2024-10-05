@@ -65,7 +65,8 @@ app.post(
 						icon_url: broadcaster.image,
 					},
 					image: {
-						url: movie.large_thumbnail,
+						// "*-2.jpg"はリンク切れするため、URLを置換する
+						url: movie.large_thumbnail.replace("-2.jpg", "-1.jpg"),
 					},
 					footer: {
 						text: "ツイキャス",
