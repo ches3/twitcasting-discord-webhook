@@ -77,6 +77,8 @@ app.post(
 			],
 		};
 
+		console.log(message);
+
 		const success = await sendMessage(webhook, message);
 		if (!success) {
 			return c.json({ message: "Failed to send webhook" }, 400);
