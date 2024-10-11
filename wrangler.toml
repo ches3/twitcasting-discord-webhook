@@ -9,3 +9,10 @@ enabled = true
 [[kv_namespaces]]
 binding = "WATCH_LIST"
 id = "2ccff9a8459c4d179a477d068ec8cdb9"
+
+[env.dev]
+tail_consumers = []
+
+[[env.dev.kv_namespaces]]
+binding = "WATCH_LIST"
+id = "92883d5e1237474b82677c9a06b87b07"
